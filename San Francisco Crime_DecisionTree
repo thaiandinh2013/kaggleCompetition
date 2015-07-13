@@ -1,0 +1,33 @@
+train <- read.csv("../input/train.csv")
+sampleTrain <- train              #[sample(nrow(train),20000),]
+
+test <- read.csv("../input/test.csv")
+
+library(rpart)
+library(rattle)
+library(RColorBrewer)
+library(rpart.plot)
+
+
+train$Date2 <- as.numeric(unclass(as.POSIXct(train$Dates)))
+test$Date2 <- as.numeric(unclass(as.POSIXct(test$Dates)))
+
+print("Values Created")
+
+tree <- rpart(Category ~ X + Y + Date2 ,
+              data = train,
+              method = "class",
+              control = rpart.control(minsplit = 200,cp=0)
+              )
+
+
+# fancyRpartPlot(tree)
+
+# sum(predict(object = tree,newdata = sampleTrain,type = "class")!=sampleTrain$Category)
+
+predicted <- predict(object = tree,newdata = test)
+final <- data.frame(Id = test$Id , predicted)
+colnames(final)  <- c("Id",levels(train$Category))
+
+write.csv(final,file = "my_sub.csv",row.names = FALSE,quote = F)
+                
