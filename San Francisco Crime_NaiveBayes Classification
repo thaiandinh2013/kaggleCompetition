@@ -1,0 +1,22 @@
+#Loading the dataset into R
+train<-read.csv("train.csv")
+test<-read.csv("test.csv")
+
+
+#exploratory data analysis
+Category<-train$Category
+head(Category)
+table(Category,train$PdDistrict)
+pair.panels(Category,train$PdDistrict)
+
+
+#Naive Bayes Classification
+library(e1071)
+library(caret)
+intrain<-createDataPartition(y=train$Category,p=0.7,list=FALSE)
+training<-train[intrain,]
+testing<-train[-intrain,]
+
+model<-naiveBayes(formula=Category~.,data=training)
+predicted<-predict(model,testing)
+confusionMatrix(predicted,testing$Category)
