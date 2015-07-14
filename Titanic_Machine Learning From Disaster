@@ -1,0 +1,93 @@
+# This competition is based on the sinking of the ill-fated Titanic on 15 April 1952
+#One of the reasons that the shipwreck led to such loss of life was that there were not enough lifeboats for the passengers 
+and crew.
+#In this challenge, Kaggle asks contestants to complete the analysis of what sorts of people were likely to survive
+#More infomation can be found at this website https://www.kaggle.com/c/titanic
+# The data set can also be downloaded from there. 
+
+import pandas as pd
+from pandas import Series, DataFrame
+import csv
+
+titanic_df = pd.read_csv('Downloads/train.csv')
+titanic_df.head()
+titanic_df.info()
+
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+import seaborn as sns
+
+
+#Exploratory data analysis
+# Let's first check gender
+sns.factorplot('Sex',data=titanic_df)
+
+#seperate the genders by classes
+sns.factorplot('Sex',data=titanic_df,hue='Pclass')
+
+#seperate the genders by classes
+sns.factorplot('Pclass',data=titanic_df,hue='Sex')
+
+def male_female_child(passenger):
+    age,sex=passenger
+    if age<16 :
+        return 'child'
+    else:
+        return sex
+
+titanic_df['person']=titanic_df[['Age','Sex']].apply(male_female_child,axis=1)
+titanic_df[1:10]
+
+sns.factorplot('Pclass',data=titanic_df,hue='person')
+titanic_df['Age'].hist(bins=70)
+titanic_df['Age'].mean()
+fig =sns.FacetGrid(titanic_df,hue='Sex',aspect=4)
+fig.map(sns.kdeplot,'Age',shade=True )
+oldest=titanic_df['Age'].max()
+
+fig.set(xlim=(0,oldest))
+fig.add_legend()
+
+fig =sns.FacetGrid(titanic_df,hue='Pclass',aspect=4)
+fig.map(sns.kdeplot,'Age',shade=True )
+oldest=titanic_df['Age'].max()
+
+fig.set(xlim=(0,oldest))
+fig.add_legend()
+
+titanic_df.head()
+deck=titanic_df['Cabin'].dropna()
+deck.head()
+levels=[]
+
+for level in deck:
+    levels.append(level[0])
+
+cabin_df=DataFrame(levels)
+
+cabin_df.columns=['Cabin']
+
+sns.factorplot('Cabin',data=cabin_df,palette='winter_d')
+
+sns.factorplot('Embarked',data=titanic_df,hue='Pclass',x_order=['C','Q','S'])
+
+titanic_df['Alone']=titanic_df.SibSp+titanic_df.Parch
+titanic_df['Alone'].head()
+
+titanic_df['Alone'].loc[titanic_df['Alone'] >0] = "With Family"
+titanic_df['Alone'].loc[titanic_df['Alone']==0]="Alone"
+titanic_df.head()
+
+sns.factorplot('Alone',data=titanic_df,palette='Blues')
+titanic_df['Survivor']=titanic_df.Survived.map({0:'no',1:'yes'})
+titanic_df['Survivor']
+
+sns.factorplot('Pclass','Survived',hue="person",data=titanic_df)
+sns.lmplot('Age','Survived',data=titanic_df)
+
+
+
+
+
