@@ -30,6 +30,7 @@ sns.factorplot('Sex',data=titanic_df,hue='Pclass')
 #seperate the genders by classes
 sns.factorplot('Pclass',data=titanic_df,hue='Sex')
 
+#The below function is used to split the data set into male, female and children
 def male_female_child(passenger):
     age,sex=passenger
     if age<16 :
@@ -40,6 +41,7 @@ def male_female_child(passenger):
 titanic_df['person']=titanic_df[['Age','Sex']].apply(male_female_child,axis=1)
 titanic_df[1:10]
 
+# factorplot& Histogram
 sns.factorplot('Pclass',data=titanic_df,hue='person')
 titanic_df['Age'].hist(bins=70)
 titanic_df['Age'].mean()
@@ -60,6 +62,8 @@ fig.add_legend()
 titanic_df.head()
 deck=titanic_df['Cabin'].dropna()
 deck.head()
+
+# In the below function, we try to classify passengers based on the first letter of the desk level 
 levels=[]
 
 for level in deck:
